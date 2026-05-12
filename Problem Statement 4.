@@ -1,0 +1,176 @@
+Problem Statement 4 (DML USING MYSQL)
+Create following tables using a given schema and insert appropriate data into the same: Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age)
+Branch (Branch ID, Branch_Name, Address)
+Account (Account_no, Branch ID, CustID, date_open, Account_type, Balance)
+1.	Modify the size of column “Email_Address” to 20 in Customer table.
+2.	Change the column “Email_Address” to Not Null in Customer table.
+3.	Display the total customers with the balance >50, 000 Rs.
+4.	Display average balance for account type=”Saving Account”.
+5.	Display the customer details that lives in Pune or name starts with ’A’.
+6.	Create a table Saving_Account with (Account_no, Branch ID, CustID, date_open, Balance) using Account Table.
+7.	Display the customer details Age wise with balance>=20,000Rs
+
+
+-- =========================================
+-- DBMS Practical 4
+-- DML USING MYSQL
+-- =========================================
+
+-- Step 1 : Create Database
+CREATE DATABASE BankDB4;
+
+-- Step 2 : Select Database
+USE BankDB4;
+
+-- =========================================
+-- Step 3 : Create Branch Table
+-- =========================================
+
+CREATE TABLE Branch(
+    Branch_ID INT PRIMARY KEY,
+    Branch_Name VARCHAR(50),
+    Address VARCHAR(100)
+);
+
+-- =========================================
+-- Step 4 : Create Customer Table
+-- =========================================
+
+CREATE TABLE Customer(
+    CustID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Cust_Address VARCHAR(100),
+    Phone_no VARCHAR(15),
+    Email_Address VARCHAR(50),
+    Age INT
+);
+
+-- =========================================
+-- Step 5 : Create Account Table
+-- =========================================
+
+CREATE TABLE Account(
+    Account_no INT PRIMARY KEY,
+    Branch_ID INT,
+    CustID INT,
+    date_open DATE,
+    Account_type VARCHAR(30),
+    Balance DECIMAL(10,2),
+
+    FOREIGN KEY (Branch_ID)
+    REFERENCES Branch(Branch_ID),
+
+    FOREIGN KEY (CustID)
+    REFERENCES Customer(CustID)
+);
+
+-- =========================================
+-- Step 6 : Insert Data into Branch Table
+-- =========================================
+
+INSERT INTO Branch VALUES
+(1,'Pune Branch','Pune'),
+(2,'Mumbai Branch','Mumbai'),
+(3,'Nashik Branch','Nashik');
+
+-- =========================================
+-- Step 7 : Insert Data into Customer Table
+-- =========================================
+
+INSERT INTO Customer VALUES
+(101,'Amit','Pune','9876543210','amit@gmail.com',40),
+(102,'Rahul','Mumbai','9876543211','rahul@gmail.com',25),
+(103,'Anjali','Delhi','9876543212','anjali@gmail.com',35);
+
+-- =========================================
+-- Step 8 : Insert Data into Account Table
+-- =========================================
+
+INSERT INTO Account VALUES
+(1001,1,101,'2020-01-10','Saving Account',80000),
+(1002,2,102,'2021-02-15','Current Account',30000),
+(1003,3,103,'2022-03-20','Saving Account',20000);
+
+-- =========================================
+-- 1 : Modify Size of Email_Address
+-- =========================================
+
+ALTER TABLE Customer
+MODIFY Email_Address VARCHAR(20);
+
+-- =========================================
+-- 2 : Make Email_Address NOT NULL
+-- =========================================
+
+ALTER TABLE Customer
+MODIFY Email_Address VARCHAR(20) NOT NULL;
+
+-- =========================================
+-- 3 : Display Total Customers
+-- with Balance > 50000
+-- =========================================
+
+SELECT COUNT(*) AS Total_Customers
+FROM Account
+WHERE Balance > 50000;
+
+-- =========================================
+-- 4 : Display Average Balance
+-- for Saving Account
+-- =========================================
+
+SELECT AVG(Balance) AS Average_Balance
+FROM Account
+WHERE Account_type='Saving Account';
+
+-- =========================================
+-- 5 : Display Customers
+-- living in Pune OR name starts with 'A'
+-- =========================================
+
+SELECT *
+FROM Customer
+WHERE Cust_Address='Pune'
+OR Name LIKE 'A%';
+
+-- =========================================
+-- 6 : Create Saving_Account Table
+-- using Account Table
+-- =========================================
+
+CREATE TABLE Saving_Account AS
+SELECT Account_no,
+       Branch_ID,
+       CustID,
+       date_open,
+       Balance
+FROM Account
+WHERE Account_type='Saving Account';
+
+-- =========================================
+-- 7 : Display Customer Details
+-- Age wise with Balance >= 20000
+-- =========================================
+
+SELECT Customer.*, Account.Balance
+FROM Customer
+JOIN Account
+ON Customer.CustID = Account.CustID
+WHERE Balance >= 20000
+ORDER BY Age ASC;
+
+-- =========================================
+-- Display All Tables
+-- =========================================
+
+SELECT * FROM Branch;
+
+SELECT * FROM Customer;
+
+SELECT * FROM Account;
+
+SELECT * FROM Saving_Account;
+
+-- =========================================
+-- END
+-- =========================================
