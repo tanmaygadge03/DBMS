@@ -1,0 +1,183 @@
+Problem Statement 9 (CRUD Using MongoDB)
+Create a collection Social_Media having fields as User_Id, User_Name, No_of_Posts, No_of_Friends, Friends_List, Interests. (Hint: Friends_List and Interests can be of array type) Insert 20 documents in the collection Social_Media. Write queries for following.
+1.	List all the users from collection Social_Media in formatted manner.
+2.	Find all users having number of posts greater than 100.
+3.	List the user names and their respective Friens_List
+4.	Display the user ids and Friends list of users who have more than 5 friends.
+5.	Display all users with no of posts in descending order.
+
+
+// =========================================
+// DBMS Practical 9
+// CRUD USING MONGODB
+// =========================================
+
+// =========================================
+// Step 1 : Create Database
+// =========================================
+
+use SocialMediaDB
+
+// =========================================
+// Step 2 : Create Collection and
+// Insert Documents
+// =========================================
+
+db.Social_Media.insertMany([
+
+{
+User_Id:1,
+User_Name:"Rahul",
+No_of_Posts:120,
+No_of_Friends:6,
+Friends_List:["Amit","Sneha","Rohan","Neha","Kiran","Pooja"],
+Interests:["Coding","Music"]
+},
+
+{
+User_Id:2,
+User_Name:"Amit",
+No_of_Posts:90,
+No_of_Friends:4,
+Friends_List:["Rahul","Sneha","Kiran","Pooja"],
+Interests:["Sports","Reading"]
+},
+
+{
+User_Id:3,
+User_Name:"Sneha",
+No_of_Posts:150,
+No_of_Friends:7,
+Friends_List:["Rahul","Amit","Neha","Kiran","Pooja","Rohan","Ajay"],
+Interests:["Dance","Music"]
+},
+
+{
+User_Id:4,
+User_Name:"Rohan",
+No_of_Posts:60,
+No_of_Friends:3,
+Friends_List:["Rahul","Sneha","Ajay"],
+Interests:["Gaming","Coding"]
+},
+
+{
+User_Id:5,
+User_Name:"Neha",
+No_of_Posts:200,
+No_of_Friends:8,
+Friends_List:["Rahul","Amit","Sneha","Rohan","Ajay","Kiran","Pooja","Om"],
+Interests:["Cooking","Travel"]
+},
+
+{
+User_Id:6,
+User_Name:"Kiran",
+No_of_Posts:45,
+No_of_Friends:2,
+Friends_List:["Rahul","Amit"],
+Interests:["Reading","Music"]
+},
+
+{
+User_Id:7,
+User_Name:"Pooja",
+No_of_Posts:110,
+No_of_Friends:6,
+Friends_List:["Rahul","Amit","Sneha","Neha","Ajay","Om"],
+Interests:["Photography","Dance"]
+},
+
+{
+User_Id:8,
+User_Name:"Ajay",
+No_of_Posts:75,
+No_of_Friends:5,
+Friends_List:["Sneha","Rohan","Neha","Pooja","Om"],
+Interests:["Travel","Gaming"]
+},
+
+{
+User_Id:9,
+User_Name:"Om",
+No_of_Posts:130,
+No_of_Friends:7,
+Friends_List:["Neha","Pooja","Ajay","Rahul","Amit","Sneha","Rohan"],
+Interests:["Coding","Movies"]
+},
+
+{
+User_Id:10,
+User_Name:"Priya",
+No_of_Posts:95,
+No_of_Friends:4,
+Friends_List:["Rahul","Neha","Ajay","Pooja"],
+Interests:["Singing","Music"]
+}
+
+])
+
+// =========================================
+// Query 1
+// List all users in formatted manner
+// =========================================
+
+db.Social_Media.find().pretty()
+
+// =========================================
+// Query 2
+// Users having posts greater than 100
+// =========================================
+
+db.Social_Media.find(
+{
+No_of_Posts:{$gt:100}
+}
+)
+
+// =========================================
+// Query 3
+// Display User_Name and Friends_List
+// =========================================
+
+db.Social_Media.find(
+{},
+{
+User_Name:1,
+Friends_List:1,
+_id:0
+}
+)
+
+// =========================================
+// Query 4
+// Display User_Id and Friends_List
+// Users having more than 5 friends
+// =========================================
+
+db.Social_Media.find(
+{
+No_of_Friends:{$gt:5}
+},
+{
+User_Id:1,
+Friends_List:1,
+_id:0
+}
+)
+
+// =========================================
+// Query 5
+// Display users with posts
+// in descending order
+// =========================================
+
+db.Social_Media.find().sort(
+{
+No_of_Posts:-1
+}
+)
+
+// =========================================
+// END
+// =========================================
