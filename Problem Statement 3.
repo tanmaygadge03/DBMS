@@ -1,0 +1,178 @@
+Problem Statement 3 (DML USING MYSQL)
+Create following tables using a given schema and insert appropriate data into the same: Customer (CustID, Name, Cust_Address, Phone_no, Age)
+Branch (Branch ID, Branch_Name, Address)
+Account (Account_no, Branch ID, CustID, date_open, Account_type, Balance)
+1.	Add the column “Email_Address” in Customer table.
+2.	Change the name of column “Email_Address” to “Email_ID” in Customer table.
+3.	Display the customer details with highest balance in the account.
+4.	Display the customer details with lowest balance for account type= “Saving Account”.
+5.	Display the customer details that live in Pune and have age greater than 35.
+6.	Display the Cust_ID, Name and Age of the customer in ascending order of their age.
+7.	Display the Name and Branch ID of the customer group by the Account_type.
+
+
+-- =========================================
+-- DBMS Practical 3
+-- DML USING MYSQL
+-- =========================================
+
+-- Step 1 : Create Database
+CREATE DATABASE BankDB3;
+
+-- Step 2 : Select Database
+USE BankDB3;
+
+-- =========================================
+-- Step 3 : Create Branch Table
+-- =========================================
+
+CREATE TABLE Branch(
+    Branch_ID INT PRIMARY KEY,
+    Branch_Name VARCHAR(50),
+    Address VARCHAR(100)
+);
+
+-- =========================================
+-- Step 4 : Create Customer Table
+-- =========================================
+
+CREATE TABLE Customer(
+    CustID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Cust_Address VARCHAR(100),
+    Phone_no VARCHAR(15),
+    Age INT
+);
+
+-- =========================================
+-- Step 5 : Create Account Table
+-- =========================================
+
+CREATE TABLE Account(
+    Account_no INT PRIMARY KEY,
+    Branch_ID INT,
+    CustID INT,
+    date_open DATE,
+    Account_type VARCHAR(30),
+    Balance DECIMAL(10,2),
+
+    FOREIGN KEY (Branch_ID)
+    REFERENCES Branch(Branch_ID),
+
+    FOREIGN KEY (CustID)
+    REFERENCES Customer(CustID)
+);
+
+-- =========================================
+-- Step 6 : Insert Data into Branch Table
+-- =========================================
+
+INSERT INTO Branch VALUES
+(1,'Pune Branch','Pune'),
+(2,'Mumbai Branch','Mumbai'),
+(3,'Nashik Branch','Nashik');
+
+-- =========================================
+-- Step 7 : Insert Data into Customer Table
+-- =========================================
+
+INSERT INTO Customer VALUES
+(101,'Rahul','Pune','9876543210',40),
+(102,'Amit','Mumbai','9876543211',30),
+(103,'Sneha','Pune','9876543212',45);
+
+-- =========================================
+-- Step 8 : Insert Data into Account Table
+-- =========================================
+
+INSERT INTO Account VALUES
+(1001,1,101,'2020-01-10','Saving Account',90000),
+(1002,2,102,'2021-02-15','Current Account',20000),
+(1003,3,103,'2022-03-20','Saving Account',10000);
+
+-- =========================================
+-- 1 : Add Column Email_Address
+-- =========================================
+
+ALTER TABLE Customer
+ADD Email_Address VARCHAR(50);
+
+-- =========================================
+-- 2 : Rename Column Email_Address to Email_ID
+-- =========================================
+
+ALTER TABLE Customer
+CHANGE Email_Address Email_ID VARCHAR(50);
+
+-- =========================================
+-- 3 : Display Customer with Highest Balance
+-- =========================================
+
+SELECT Customer.*, Account.Balance
+FROM Customer
+JOIN Account
+ON Customer.CustID = Account.CustID
+WHERE Balance = (
+    SELECT MAX(Balance)
+    FROM Account
+);
+
+-- =========================================
+-- 4 : Display Customer with Lowest Balance
+-- For Saving Account
+-- =========================================
+
+SELECT Customer.*, Account.Balance
+FROM Customer
+JOIN Account
+ON Customer.CustID = Account.CustID
+WHERE Account_type='Saving Account'
+AND Balance = (
+    SELECT MIN(Balance)
+    FROM Account
+    WHERE Account_type='Saving Account'
+);
+
+-- =========================================
+-- 5 : Display Customer living in Pune
+-- and age greater than 35
+-- =========================================
+
+SELECT *
+FROM Customer
+WHERE Cust_Address='Pune'
+AND Age > 35;
+
+-- =========================================
+-- 6 : Display CustID, Name and Age
+-- in Ascending Order of Age
+-- =========================================
+
+SELECT CustID, Name, Age
+FROM Customer
+ORDER BY Age ASC;
+
+-- =========================================
+-- 7 : Display Name and Branch_ID
+-- Group By Account_Type
+-- =========================================
+
+SELECT Customer.Name, Account.Branch_ID, Account.Account_type
+FROM Customer
+JOIN Account
+ON Customer.CustID = Account.CustID
+GROUP BY Account.Account_type, Customer.Name, Account.Branch_ID;
+
+-- =========================================
+-- Display All Tables
+-- =========================================
+
+SELECT * FROM Branch;
+
+SELECT * FROM Customer;
+
+SELECT * FROM Account;
+
+-- =========================================
+-- END
+-- =========================================
