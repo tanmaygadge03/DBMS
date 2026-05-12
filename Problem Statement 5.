@@ -1,0 +1,182 @@
+Problem Statement 5 (JOINS & SUBQUERIES USING MYSQL)
+Consider Following Schema
+Employee (Employee_id, First_name, last_name , hire_date, salary, Job_title, manager_id, department_id) Departments(Department_id, Department_name, Manager_id, Location_id)
+Locations(location_id ,street_address ,postal_code, city, state, country_id) Manager(Manager_id, Manager_name)
+Create the tables with referential integrity. Solve following queries using joins and subqueries.
+1.	Write a query to find the names (first_name, last_name) and the salaries of the employees who have a higher salary than the employee whose last_name=''Singh”.
+2.	Write a query to find the names (first_name, last_name) of the employees who have a manager and work for a department based in the United States.
+3.	Write a query to find the names (first_name, last_name), the salary of the employees whose salary is greater than the average salary.
+
+
+-- =========================================
+-- DBMS Practical 5
+-- JOINS & SUBQUERIES USING MYSQL
+-- =========================================
+
+-- Step 1 : Create Database
+CREATE DATABASE CompanyDB;
+
+-- Step 2 : Select Database
+USE CompanyDB;
+
+-- =========================================
+-- Step 3 : Create Manager Table
+-- =========================================
+
+CREATE TABLE Manager(
+    Manager_id INT PRIMARY KEY,
+    Manager_name VARCHAR(50)
+);
+
+-- =========================================
+-- Step 4 : Create Locations Table
+-- =========================================
+
+CREATE TABLE Locations(
+    location_id INT PRIMARY KEY,
+    street_address VARCHAR(100),
+    postal_code VARCHAR(20),
+    city VARCHAR(50),
+    state VARCHAR(50),
+    country_id VARCHAR(50)
+);
+
+-- =========================================
+-- Step 5 : Create Departments Table
+-- =========================================
+
+CREATE TABLE Departments(
+    Department_id INT PRIMARY KEY,
+    Department_name VARCHAR(50),
+    Manager_id INT,
+    Location_id INT,
+
+    FOREIGN KEY (Manager_id)
+    REFERENCES Manager(Manager_id),
+
+    FOREIGN KEY (Location_id)
+    REFERENCES Locations(location_id)
+);
+
+-- =========================================
+-- Step 6 : Create Employee Table
+-- =========================================
+
+CREATE TABLE Employee(
+    Employee_id INT PRIMARY KEY,
+    First_name VARCHAR(50),
+    Last_name VARCHAR(50),
+    Hire_date DATE,
+    Salary DECIMAL(10,2),
+    Job_title VARCHAR(50),
+    Manager_id INT,
+    Department_id INT,
+
+    FOREIGN KEY (Manager_id)
+    REFERENCES Manager(Manager_id),
+
+    FOREIGN KEY (Department_id)
+    REFERENCES Departments(Department_id)
+);
+
+-- =========================================
+-- Step 7 : Insert Data into Manager Table
+-- =========================================
+
+INSERT INTO Manager VALUES
+(1,'Rajesh'),
+(2,'Amit'),
+(3,'Sneha');
+
+-- =========================================
+-- Step 8 : Insert Data into Locations Table
+-- =========================================
+
+INSERT INTO Locations VALUES
+(101,'MG Road','411001','Pune','Maharashtra','India'),
+(102,'Park Street','100001','New York','NY','United States'),
+(103,'Link Road','400001','Mumbai','Maharashtra','India');
+
+-- =========================================
+-- Step 9 : Insert Data into Departments Table
+-- =========================================
+
+INSERT INTO Departments VALUES
+(10,'HR',1,101),
+(20,'IT',2,102),
+(30,'Sales',3,103);
+
+-- =========================================
+-- Step 10 : Insert Data into Employee Table
+-- =========================================
+
+INSERT INTO Employee VALUES
+(1001,'Rahul','Singh','2020-01-10',30000,'Clerk',1,10),
+(1002,'Amit','Sharma','2021-02-15',50000,'Developer',2,20),
+(1003,'Sneha','Patil','2022-03-20',60000,'Manager',3,30),
+(1004,'Rohan','Joshi','2021-04-12',35000,'Tester',2,20);
+
+-- =========================================
+-- Query 1
+-- Employees having salary greater than
+-- employee whose last name is 'Singh'
+-- =========================================
+
+SELECT First_name,
+       Last_name,
+       Salary
+FROM Employee
+WHERE Salary >
+(
+    SELECT Salary
+    FROM Employee
+    WHERE Last_name='Singh'
+);
+
+-- =========================================
+-- Query 2
+-- Employees who have a manager and work
+-- in department based in United States
+-- =========================================
+
+SELECT E.First_name,
+       E.Last_name
+FROM Employee E
+JOIN Departments D
+ON E.Department_id = D.Department_id
+JOIN Locations L
+ON D.Location_id = L.location_id
+WHERE E.Manager_id IS NOT NULL
+AND L.country_id='United States';
+
+-- =========================================
+-- Query 3
+-- Employees whose salary is greater
+-- than average salary
+-- =========================================
+
+SELECT First_name,
+       Last_name,
+       Salary
+FROM Employee
+WHERE Salary >
+(
+    SELECT AVG(Salary)
+    FROM Employee
+);
+
+-- =========================================
+-- Display All Tables
+-- =========================================
+
+SELECT * FROM Manager;
+
+SELECT * FROM Locations;
+
+SELECT * FROM Departments;
+
+SELECT * FROM Employee;
+
+-- =========================================
+-- END
+-- =========================================
