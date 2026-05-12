@@ -1,0 +1,152 @@
+Problem Statement 1 (DDL USING MYSQL)
+Create following tables using a given schema and insert appropriate data into the same:
+
+Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age) Branch (Branch ID, Branch_Name, Address)
+Account (Account_no, Branch ID, CustID, date_open, Account_type, Balance)
+1.	Create the tables with referential integrity.
+2.	Draw the ER diagram for the same.
+3.	Create an Index on primary key column of table Account
+4.	Create the view as Customer_Info displaying the customer details for age less than 45.
+5.	Update the View with open date as 16/4/2017
+6.	Create a sequence on Branch able.
+7.	Create synonym ‘Branch_info’ for branch table.
+
+
+
+
+-- Step 1 : Create Database
+CREATE DATABASE BankDB;
+
+-- Step 2 : Select Database
+USE BankDB;
+
+-- =========================================
+-- Step 3 : Create Branch Table
+-- =========================================
+
+CREATE TABLE Branch(
+    Branch_ID INT PRIMARY KEY,
+    Branch_Name VARCHAR(50),
+    Address VARCHAR(100)
+);
+
+-- =========================================
+-- Step 4 : Create Customer Table
+-- =========================================
+
+CREATE TABLE Customer(
+    CustID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Cust_Address VARCHAR(100),
+    Phone_no VARCHAR(15),
+    Email_ID VARCHAR(50),
+    Age INT
+);
+
+-- =========================================
+-- Step 5 : Create Account Table
+-- Referential Integrity using Foreign Key
+-- =========================================
+
+CREATE TABLE Account(
+    Account_no INT PRIMARY KEY,
+    Branch_ID INT,
+    CustID INT,
+    date_open DATE,
+    Account_type VARCHAR(20),
+    Balance DECIMAL(10,2),
+
+    FOREIGN KEY (Branch_ID)
+    REFERENCES Branch(Branch_ID),
+
+    FOREIGN KEY (CustID)
+    REFERENCES Customer(CustID)
+);
+
+-- =========================================
+-- Step 6 : Insert Data into Branch Table
+-- =========================================
+
+INSERT INTO Branch VALUES
+(1,'Pune Branch','Pune'),
+(2,'Mumbai Branch','Mumbai'),
+(3,'Nashik Branch','Nashik');
+
+-- =========================================
+-- Step 7 : Insert Data into Customer Table
+-- =========================================
+
+INSERT INTO Customer VALUES
+(101,'Rahul','Pune','9876543210','rahul@gmail.com',25),
+(102,'Amit','Mumbai','9876543211','amit@gmail.com',40),
+(103,'Sneha','Nashik','9876543212','sneha@gmail.com',50);
+
+-- =========================================
+-- Step 8 : Insert Data into Account Table
+-- =========================================
+
+INSERT INTO Account VALUES
+(1001,1,101,'2017-04-10','Saving',50000),
+(1002,2,102,'2018-05-15','Current',70000),
+(1003,3,103,'2019-06-20','Saving',30000);
+
+-- =========================================
+-- Step 9 : Display All Tables
+-- =========================================
+
+SELECT * FROM Branch;
+
+SELECT * FROM Customer;
+
+SELECT * FROM Account;
+
+-- =========================================
+--  1 : Create Index on Account_no
+-- =========================================
+
+CREATE INDEX idx_account
+ON Account(Account_no);
+
+-- =========================================
+-- 2 : Create View Customer_Info
+-- Display customer age less than 45
+-- =========================================
+
+CREATE VIEW Customer_Info AS
+SELECT *
+FROM Customer
+WHERE Age < 45;
+
+-- Display View
+SELECT * FROM Customer_Info;
+
+-- =========================================
+-- 3 : Update Open Date
+-- =========================================
+
+UPDATE Account
+SET date_open='2017-04-16';
+
+-- =========================================
+-- 4 : Create Sequence Alternative
+-- MySQL uses AUTO_INCREMENT
+-- =========================================
+
+CREATE TABLE Branch_New(
+    Branch_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Branch_Name VARCHAR(50),
+    Address VARCHAR(100)
+);
+
+-- =========================================
+-- 5 : Create Synonym Alternative
+-- MySQL does not support SYNONYM
+-- Using VIEW instead
+-- =========================================
+
+CREATE VIEW Branch_info AS
+SELECT * FROM Branch;
+
+-- =========================================
+-- END
+-- =========================================
