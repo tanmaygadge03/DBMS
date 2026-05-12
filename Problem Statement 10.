@@ -1,0 +1,201 @@
+Problem Statement 10 (Aggregation & Indexing)
+Create the Collection Movies_Data( Movie_ID, Movie_Name, Director, Genre, BoxOfficeCollection) and solve the following:
+1.	Display a list stating how many Movies are directed by each “Director”.
+2.	Display list of Movies with the highest BoxOfficeCollection in each Genre.
+3.	Display list of Movies with the highest BoxOfficeCollection in each Genre in ascending order of BoxOfficeCollection.
+4.	Create an index on field Movie_ID.
+5.	Create an index on fields ” Movie_Name” and ” Director”.
+6.	Drop an index on field Movie_ID.
+7.	Drop an index on fields ” Movie_Name” and ” Director”.
+ 
+
+// =========================================
+// DBMS Practical 10
+// AGGREGATION & INDEXING USING MONGODB
+// =========================================
+
+// =========================================
+// Step 1 : Create Database
+// =========================================
+
+use MoviesDB
+
+// =========================================
+// Step 2 : Create Collection and
+// Insert Documents
+// =========================================
+
+db.Movies_Data.insertMany([
+
+{
+Movie_ID:1,
+Movie_Name:"KGF",
+Director:"Prashanth Neel",
+Genre:"Action",
+BoxOfficeCollection:1200
+},
+
+{
+Movie_ID:2,
+Movie_Name:"Dangal",
+Director:"Nitesh Tiwari",
+Genre:"Drama",
+BoxOfficeCollection:2000
+},
+
+{
+Movie_ID:3,
+Movie_Name:"Bahubali",
+Director:"S S Rajamouli",
+Genre:"Action",
+BoxOfficeCollection:1800
+},
+
+{
+Movie_ID:4,
+Movie_Name:"3 Idiots",
+Director:"Rajkumar Hirani",
+Genre:"Comedy",
+BoxOfficeCollection:900
+},
+
+{
+Movie_ID:5,
+Movie_Name:"PK",
+Director:"Rajkumar Hirani",
+Genre:"Comedy",
+BoxOfficeCollection:1200
+},
+
+{
+Movie_ID:6,
+Movie_Name:"RRR",
+Director:"S S Rajamouli",
+Genre:"Action",
+BoxOfficeCollection:1500
+},
+
+{
+Movie_ID:7,
+Movie_Name:"Chhichhore",
+Director:"Nitesh Tiwari",
+Genre:"Drama",
+BoxOfficeCollection:700
+}
+
+])
+
+// =========================================
+// Query 1
+// Count Movies directed by each Director
+// =========================================
+
+db.Movies_Data.aggregate([
+
+{
+$group:{
+_id:"$Director",
+Total_Movies:{$sum:1}
+}
+}
+
+])
+
+// =========================================
+// Query 2
+// Highest BoxOfficeCollection in each Genre
+// =========================================
+
+db.Movies_Data.aggregate([
+
+{
+$sort:{BoxOfficeCollection:-1}
+},
+
+{
+$group:{
+_id:"$Genre",
+Movie_Name:{$first:"$Movie_Name"},
+Highest_Collection:{$first:"$BoxOfficeCollection"}
+}
+}
+
+])
+
+// =========================================
+// Query 3
+// Highest BoxOfficeCollection in each Genre
+// in Ascending Order
+// =========================================
+
+db.Movies_Data.aggregate([
+
+{
+$sort:{BoxOfficeCollection:-1}
+},
+
+{
+$group:{
+_id:"$Genre",
+Movie_Name:{$first:"$Movie_Name"},
+Highest_Collection:{$first:"$BoxOfficeCollection"}
+}
+},
+
+{
+$sort:{Highest_Collection:1}
+}
+
+])
+
+// =========================================
+// Query 4
+// Create Index on Movie_ID
+// =========================================
+
+db.Movies_Data.createIndex(
+{
+Movie_ID:1
+}
+)
+
+// =========================================
+// Query 5
+// Create Compound Index on
+// Movie_Name and Director
+// =========================================
+
+db.Movies_Data.createIndex(
+{
+Movie_Name:1,
+Director:1
+}
+)
+
+// =========================================
+// Query 6
+// Drop Index on Movie_ID
+// =========================================
+
+db.Movies_Data.dropIndex(
+{
+Movie_ID:1
+}
+)
+
+// =========================================
+// Query 7
+// Drop Compound Index
+// Movie_Name and Director
+// =========================================
+
+db.Movies_Data.dropIndex(
+{
+Movie_Name:1,
+Director:1
+}
+)
+
+// =========================================
+// END
+// =========================================
